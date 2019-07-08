@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.msj.dao.ClaimVoucherDao">
+    <resultMap id="claimVoucher" type="com.msj.entity.ClaimVoucher">
+        <id property="id" column="id" javaType="java.lang.Integer"/>
+        <result property="cause" column="cause" javaType="java.lang.String"/>
+        <result property="createSn" column="create_sn" javaType="java.lang.String"/>
+        <result property="createTime" column="create_time" javaType="java.util.Date"/>
+        <result property="nextDealSn" column="next_deal_sn" javaType="java.lang.String"/>
+        <result property="totalAmount" column="total_amount" javaType="java.lang.Double"/>
+        <result property="status" column="status" javaType="java.lang.String"/>
+        <association property="creater" column="create_sn" javaType="com.msj.entity.Employee">
+            <result property="name" column="name" javaType="java.lang.String"/>
+        </association>
+    </resultMap>
+    <!--
+        当主键是自增的情况下，添加一条记录的同时，其主键是不能使用的
+        但是有时我们需要该主键，就应该设置useGeneratedKeys="true" keyProperty="id"
+        useGeneratedKeys表示将当前主键值自动赋值给实体类ID
+    -->
+    <insert id="insertOne" useGeneratedKeys="true" keyProperty="id" parameterType="com.msj.entity.ClaimVoucher">
+        insert into claim_voucher(cause,create_sn,create_time,next_deal_sn,total_amount,status)
+        values(#{cause},#{createSn},#{createTime},#{nextDealSn},#{totalAmount},#{status})
+    </insert>
+
+    <select id="selectSelf" resultMap="claimVoucher">
+        select c.*,e.name from claim_voucher c left join employee e
+        on c.create_sn = e.sn
+        where create_sn=#{createSn}
+    </select>
+
+    <select id="selectForDeal" resultMap="claimVoucher">
+        select c.*,e.name from claim_voucher c left join employee e
+        on c.create_sn = e.sn
+        where create_sn=#{createSn}
+    </select>
+
+    <select id="selectclaimVoucher" resultMap="claimVoucher">
+        select c.*,e.name from claim_voucher c left join employee e
+        on c.create_sn = e.sn
+        where id=#{id}
+    </select>
+
+    <update id="update" parameterType="com.msj.entity.ClaimVoucher">
+        update claim_voucher set cause=#{cause},create_sn=#{createSn},
+        next_deal_sn=#{nextDealSn},total_amount=#{totalAmount},status=#{status}
+        where id=#{id}
+    </update>
+
+    <select id="selectClaimVoucherByPrice" resultMap="claimVoucher">
+        select c.*,e.name  from claim_voucher c left join employee e
+        on c.create_sn = e.sn
+        where total_amount &gt;=#{low} and total_amount &lt;= #{high}
+</select>
+
+</mapper>
