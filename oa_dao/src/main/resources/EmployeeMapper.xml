@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.msj.dao.EmployeeDao">
+    <resultMap id="employee" type="com.msj.entity.Employee">
+        <id property="sn" column="sn" javaType="String"/>
+        <result property="password" column="password" javaType="String"/>
+        <result property="name" column="name" javaType="String"/>
+        <result property="departmentSn" column="department_sn" javaType="String"/>
+        <result property="post" column="post" javaType="String"/>
+        <association property="department" column="department_sn" javaType="com.msj.entity.Department">
+            <id property="sn" column="dsn" javaType="String"/>
+            <result property="name" column="dname" javaType="String"/>
+        </association>
+    </resultMap>
+
+    <select id="selectAll" resultMap="employee">
+        select e.*,d.name dname from employee e left join department d on e.department_sn = d.sn
+    </select>
+
+    <insert id="insertOne" parameterType="com.msj.entity.Employee">
+        insert into employee(sn,password,name,department_sn,post)
+        values(#{sn},#{password},#{name},#{departmentSn},#{post})
+    </insert>
+
+    <delete id="deleteOne" parameterType="java.lang.String">
+        delete from employee where sn=#{sn}
+    </delete>
+
+    <select id="selectOne" resultMap="employee">
+        select e.*,d.name dname from employee e left join department d
+        on e.department_sn = d.sn
+        where e.sn=#{sn}
+    </select>
+
+    <update id="updateOne" parameterType="com.msj.entity.Employee">
+        update employee set sn=#{sn},name=#{name},department_sn=#{departmentSn},post=#{post}
+        where sn=#{sn}
+    </update>
+
+
+
+</mapper>

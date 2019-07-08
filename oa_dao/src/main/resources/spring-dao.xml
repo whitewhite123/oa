@@ -1,0 +1,37 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--配置数据源-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql:///oa"/>
+        <property name="username" value="root"/>
+        <property name="password" value="msj"/>
+    </bean>
+
+    <!--SqlSessionFactoryBean-->
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!--引入mybatis的配置文件-->
+        <property name="mapperLocations">
+            <list>
+                <value>classpath:EmployeeMapper.xml</value>
+                <value>classpath:DepartmentMapper.xml</value>
+                <value>classpath:LoginMapper.xml</value>
+                <value>classpath:ClaimVoucherMapper.xml</value>
+                <value>classpath:ClaimVoucherItemMapper.xml</value>
+                <value>classpath:DealRecord.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <!--扫描dao包-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.msj.dao"/>
+    </bean>
+</beans>
