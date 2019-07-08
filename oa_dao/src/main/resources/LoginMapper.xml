@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.msj.dao.LoginDao">
+    <resultMap id="employee" type="com.msj.entity.Employee">
+        <id property="sn" column="sn" javaType="String"/>
+        <result property="password" column="password" javaType="String"/>
+        <result property="name" column="name" javaType="String"/>
+        <result property="departmentSn" column="department_sn" javaType="String"/>
+        <result property="img" column="img" javaType="String"/>
+        <result property="post" column="post" javaType="String"/>
+        <association property="department" column="department_sn" javaType="com.msj.entity.Department">
+            <result property="name" column="dname" javaType="String"/>
+        </association>
+    </resultMap>
+
+    <select id="selectOne" resultMap="employee">
+        select e.*,d.name dname from employee e left join Department d
+        on e.department_sn = d.sn
+        where e.sn=#{sn}
+    </select>
+
+    <update id="changePassword" parameterType="com.msj.entity.Employee">
+        update employee set password=#{password} where sn=#{sn}
+    </update>
+</mapper>
