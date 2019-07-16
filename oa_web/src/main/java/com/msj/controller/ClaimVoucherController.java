@@ -58,11 +58,9 @@ public class ClaimVoucherController {
     //查看报销单的详情
     @RequestMapping("/detail")
     public String detail(Integer id,Map<String,Object> map){
-        ClaimVoucher claimVoucher = claimVoucherService.findclaimVoucher(id);
-
-        List<ClaimVoucherItem> items = claimVoucherService.findItems(id);
-        List<DealRecord> records = claimVoucherService.findRecords(id);
-        System.out.println(claimVoucher);
+        ClaimVoucher claimVoucher = claimVoucherService.findclaimVoucher(id); //报销单
+        List<ClaimVoucherItem> items = claimVoucherService.findItems(id); //报销单详情
+        List<DealRecord> records = claimVoucherService.findRecords(id);//记录
         map.put("claimVoucher",claimVoucher);
         map.put("items",items);
         map.put("records",records);

@@ -54,6 +54,7 @@
                         <div class="col-md-3"><spring:eval expression="record.dealTime"/></div>
                         <div class="col-md-1">${record.dealWay}</div>
                         <div class="col-md-5">备注：${record.comment}</div>
+                        <br>
                     </c:forEach>
                     </div>
                     <div class="panel-footer text-right">

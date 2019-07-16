@@ -68,5 +68,13 @@
         where c.id = #{id}
     </select>
 
+    <update id="updateStatus" parameterType="com.msj.entity.ClaimVoucher">
+        update claim_voucher set status = #{status} where id = #{id}
+    </update>
+
+    <select id="selectCreateSnById" parameterType="com.msj.entity.ClaimVoucher" resultMap="claimVoucher">
+        select create_sn from claim_voucher where id=#{id}
+    </select>
+
 
 </mapper>

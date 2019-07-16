@@ -167,8 +167,20 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
     }
 
 
+    //提交
     public void submit(Integer id) {
-//        claimVoucherDao
+        //改变status为已提交
+        String status = Contant.CLAIMVOUCHER_SUBMIT;
+        claimVoucherDao.updateStatus(id,status);
+
+        //增加一条记录，添加到deal_record表中
+        DealRecord dealRecord = new DealRecord();
+        dealRecord.setDealTime(new Date());
+        ClaimVoucher claimVoucher = claimVoucherDao.selectCreateSnById(id);
+        dealRecord.setDealSn(claimVoucher.getCreateSn());
+        dealRecord.setClaimVoucherId(id);
+        dealRecord.setDealWay(Contant.DEAL_SUBMIT);
+        dealRecordDao.insertOne(dealRecord);
     }
 
 
