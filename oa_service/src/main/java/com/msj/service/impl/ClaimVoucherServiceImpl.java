@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -47,7 +48,17 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
 
     //查询个人报销单
     public List<ClaimVoucher> findSelf(String createSn) {
-        return claimVoucherDao.selectSelf(createSn);
+        List<ClaimVoucher> claimVoucherList = claimVoucherDao.selectClaimVoucherStatus(createSn);
+        Iterator<ClaimVoucher> iterator = claimVoucherList.iterator();
+        while(iterator.hasNext()){
+            ClaimVoucher next = iterator.next();
+            if((next.getStatus().equals(Contant.CLAIMVOUCHER_CREATED))){
+                //找到status = '新创建'就把它移出到list之外
+                iterator.remove();
+            }
+        }
+        return claimVoucherList;
+
     }
 
     //查询待处理的报销单

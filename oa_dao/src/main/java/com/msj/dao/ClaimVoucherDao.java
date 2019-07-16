@@ -15,4 +15,6 @@ public interface ClaimVoucherDao {
     void update(ClaimVoucher claimVoucher);
 
     List<ClaimVoucher> selectClaimVoucherByPrice(@Param("low")Integer low,@Param("high")Integer high);
+
+    List<ClaimVoucher> selectClaimVoucherStatus(String createSn);
 }

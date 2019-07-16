@@ -34,14 +34,14 @@ public class ClaimVoucherController {
     }
 
     //查看个人报销单
-//    @RequestMapping("/self")
-//    public String self(Map<String,Object> map,HttpSession session){
-//        Employee employee = (Employee)session.getAttribute("employee");
-//        String createSn = employee.getSn(); //根据创建人查看个人报销单
-//        List<ClaimVoucher> claimVoucherList = claimVoucherService.findSelf(createSn);
-//        map.put("list",claimVoucherList);
-//        return "claim_voucher_self";
-//    }
+    @RequestMapping("/self")
+    public String self(Map<String,Object> map,HttpSession session){
+        Employee employee = (Employee)session.getAttribute("employee");
+        String createSn = employee.getSn(); //根据创建人查看个人报销单
+        List<ClaimVoucher> claimVoucherList = claimVoucherService.findSelf(createSn);
+        map.put("list",claimVoucherList);
+        return "claim_voucher_self";
+    }
 
 
     //查看待处理的报销单

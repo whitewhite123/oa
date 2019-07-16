@@ -53,7 +53,13 @@
         select c.*,e.name  from claim_voucher c left join employee e
         on c.create_sn = e.sn
         where total_amount &gt;=#{low} and total_amount &lt;= #{high}
-</select>
+    </select>
+
+    <select id="selectClaimVoucherStatus" parameterType="String" resultMap="claimVoucher">
+        select c.*,e.name from claim_voucher c left join employee e
+        on e.sn = c.create_sn
+        where c.create_sn = #{createSn}
+    </select>
 
 
 
