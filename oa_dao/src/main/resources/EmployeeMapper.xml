@@ -39,6 +39,10 @@
         where sn=#{sn}
     </update>
 
+    <select id="selectNameByPost" parameterType="String" resultMap="employee">
+        select name from employee where post = #{post}
+    </select>
+
 
 
 </mapper>

@@ -12,7 +12,7 @@ public class Contant {
     public static final String POST_STAFF="员工";
     public static final String POST_FM="部门经理";
     public static final String POST_GM="总经理";
-    public static final String POST_CASHIER="财务";
+    public static final String POST_CASHIER="财务经理";
     public static List<String> getPosts(){
         List<String> list = new ArrayList<String>();
         list.add(POST_STAFF);

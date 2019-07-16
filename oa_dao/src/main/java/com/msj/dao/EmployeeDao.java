@@ -17,4 +17,6 @@ public interface EmployeeDao {
     Employee selectOne(String sn);
     void updateOne(Employee employee);
 
+    Employee selectNameByPost(String post);
+
 }

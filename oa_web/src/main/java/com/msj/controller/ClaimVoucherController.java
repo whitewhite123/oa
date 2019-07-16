@@ -39,6 +39,7 @@ public class ClaimVoucherController {
         Employee employee = (Employee)session.getAttribute("employee");
         String createSn = employee.getSn(); //根据创建人查看个人报销单
         List<ClaimVoucher> claimVoucherList = claimVoucherService.findSelf(createSn);
+        System.out.println(claimVoucherList);
         map.put("list",claimVoucherList);
         return "claim_voucher_self";
     }
@@ -55,15 +56,18 @@ public class ClaimVoucherController {
     }
 
     //查看报销单的详情
-//    @RequestMapping("/detail")
-//    public String detail(Integer id,Map<String,Object> map){
-//        ClaimVoucher claimVoucher = claimVoucherService.findclaimVoucher(id);
-//        List<ClaimVoucherItem> items = claimVoucherService.findItems(id);
-////        List<DealRecord> records = claimVoucherService.findRecords(id);
-//        map.put("items",items);
-//        map.put("claimVoucher",claimVoucher);
-//        return "claim_voucher_detail";
-//    }
+    @RequestMapping("/detail")
+    public String detail(Integer id,Map<String,Object> map){
+        ClaimVoucher claimVoucher = claimVoucherService.findclaimVoucher(id);
+
+        List<ClaimVoucherItem> items = claimVoucherService.findItems(id);
+        List<DealRecord> records = claimVoucherService.findRecords(id);
+        System.out.println(claimVoucher);
+        map.put("claimVoucher",claimVoucher);
+        map.put("items",items);
+        map.put("records",records);
+        return "claim_voucher_detail";
+    }
 
     //修改报销单
     @RequestMapping("/to_update")
@@ -75,7 +79,6 @@ public class ClaimVoucherController {
         map.put("info",info);
         return "claim_voucher_update";
     }
-
     @RequestMapping("/update")
     public String update(ClaimVoucherInfo info,HttpSession session){
         Employee employee = (Employee)session.getAttribute("employee");
@@ -89,18 +92,6 @@ public class ClaimVoucherController {
     public String submit(Integer id){
         claimVoucherService.submit(id);
         return "redirect:/claim_voucher/deal";
-    }
-
-    @RequestMapping("/detail")
-    public String detail(Integer id,Map<String,Object> map){
-        ClaimVoucher claimVoucher = claimVoucherService.findclaimVoucher(id);
-        List<ClaimVoucherItem> items = claimVoucherService.findItems(id);
-        List<DealRecord> records = claimVoucherService.findRecords(id);
-        System.out.println(claimVoucher);
-        map.put("claimVoucher",claimVoucher);
-        map.put("items",items);
-        map.put("records",records);
-        return "claim_voucher_detail";
     }
 
 }

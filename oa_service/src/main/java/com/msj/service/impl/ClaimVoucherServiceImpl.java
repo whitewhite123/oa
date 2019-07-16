@@ -3,9 +3,11 @@ package com.msj.service.impl;
 import com.msj.dao.ClaimVoucherDao;
 import com.msj.dao.ClaimVoucherItemDao;
 import com.msj.dao.DealRecordDao;
+import com.msj.dao.EmployeeDao;
 import com.msj.entity.ClaimVoucher;
 import com.msj.entity.ClaimVoucherItem;
 import com.msj.entity.DealRecord;
+import com.msj.entity.Employee;
 import com.msj.global.Contant;
 import com.msj.service.ClaimVoucherService;
 import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
@@ -25,6 +27,8 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
     private ClaimVoucherItemDao claimVoucherItemDao;
     @Autowired
     private DealRecordDao dealRecordDao;
+    @Autowired
+    private EmployeeDao employeeDao;
 
     //添加报销单
     public void save(ClaimVoucher claimVoucher, List<ClaimVoucherItem> items) {
@@ -93,9 +97,30 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
 
     }
 
-    //查询报销单
+    //查询报销单详情
     public ClaimVoucher findclaimVoucher(Integer id) {
-        return claimVoucherDao.selectclaimVoucher(id);
+        ClaimVoucher claimVoucher = claimVoucherDao.selectclaimVoucher(id);
+        String status = claimVoucher.getStatus();
+        if(status.equals(Contant.CLAIMVOUCHER_CREATED)||status.equals(Contant.CLAIMVOUCHER_BACK)){
+            //如果status是新创建或者已打回，那么处理人就是自己
+            claimVoucher.setDealer(claimVoucher.getCreater());
+        }else if(status.equals(Contant.CLAIMVOUCHER_SUBMIT)){
+            //如果status是已提交，那么处理人就是部门经理
+            String post = Contant.POST_FM;//部门经理
+            Employee e = employeeDao.selectNameByPost(post);
+            claimVoucher.setDealer(e);
+        }else if(status.equals(Contant.CLAIMVOUCHER_RECHECK)){
+            //如果status是待复审，那么处理人就是总经理
+            String post = Contant.POST_GM; //总经理
+            Employee e = employeeDao.selectNameByPost(post);
+            claimVoucher.setDealer(e);
+        }else if(status.equals(Contant.CLAIMVOUCHER_APPROVED)){
+            //如果status是已审核，那么处理人就是财务经理
+            String post = Contant.POST_CASHIER;//财务经理
+            Employee e = employeeDao.selectNameByPost(post);
+            claimVoucher.setDealer(e);
+        }
+        return claimVoucher;
     }
 
     //查询报销单详情
@@ -141,9 +166,6 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
         }
     }
 
-    public List<ClaimVoucher> selectClaimVoucherByPrice(Integer low, Integer high) {
-        return claimVoucherDao.selectClaimVoucherByPrice(low,high);
-    }
 
     public void submit(Integer id) {
 //        claimVoucherDao

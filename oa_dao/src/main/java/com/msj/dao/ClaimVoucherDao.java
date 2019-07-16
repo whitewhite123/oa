@@ -2,6 +2,7 @@ package com.msj.dao;
 
 import com.msj.entity.ClaimVoucher;
 import com.msj.entity.ClaimVoucherItem;
+import com.msj.entity.Employee;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -11,10 +12,8 @@ public interface ClaimVoucherDao {
     List<ClaimVoucher> selectSelf(String createSn);
     List<ClaimVoucher> selectForDeal(String status);
     ClaimVoucher selectclaimVoucher(Integer id);
-
     void update(ClaimVoucher claimVoucher);
 
-    List<ClaimVoucher> selectClaimVoucherByPrice(@Param("low")Integer low,@Param("high")Integer high);
 
     List<ClaimVoucher> selectClaimVoucherStatus(String createSn);
 }
