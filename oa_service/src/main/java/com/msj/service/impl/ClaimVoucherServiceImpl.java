@@ -8,6 +8,7 @@ import com.msj.entity.ClaimVoucherItem;
 import com.msj.entity.DealRecord;
 import com.msj.global.Contant;
 import com.msj.service.ClaimVoucherService;
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,8 +44,21 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
     }
 
     //查询待处理的报销单
-    public List<ClaimVoucher> findForDeal(String createSn) {
-        return claimVoucherDao.selectForDeal(createSn);
+    public List<ClaimVoucher> findForDeal(String post) {
+        if(post.equals("总经理")){
+            String status = Contant.CLAIMVOUCHER_RECHECK;
+            return claimVoucherDao.selectForDeal(status);
+        }else if(post.equals("部门经理")){
+            String status = Contant.CLAIMVOUCHER_SUBMIT;
+            return claimVoucherDao.selectForDeal(status);
+        }else if(post.equals("财务经理")){
+            String status = Contant.CLAIMVOUCHER_APPROVED;
+            return claimVoucherDao.selectForDeal(status);
+        }else{
+            String status = Contant.CLAIMVOUCHER_CREATED;
+            return claimVoucherDao.selectForDeal(status);
+        }
+
     }
 
     //查询报销单

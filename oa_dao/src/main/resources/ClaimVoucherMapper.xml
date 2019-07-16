@@ -31,17 +31,17 @@
         where create_sn=#{createSn}
     </select>
 
-    <select id="selectForDeal" resultMap="claimVoucher">
+    <select id="selectForDeal" resultMap="claimVoucher" parameterType="String">
         select c.*,e.name from claim_voucher c left join employee e
         on c.create_sn = e.sn
-        where create_sn=#{createSn}
+        where c.status = #{status}
     </select>
 
-    <select id="selectclaimVoucher" resultMap="claimVoucher">
-        select c.*,e.name from claim_voucher c left join employee e
-        on c.create_sn = e.sn
-        where id=#{id}
-    </select>
+    <!--<select id="selectclaimVoucher" resultMap="claimVoucher">-->
+        <!--select c.*,e.name from claim_voucher c left join employee e-->
+        <!--on c.create_sn = e.sn-->
+        <!--where id=#{id}-->
+    <!--</select>-->
 
     <update id="update" parameterType="com.msj.entity.ClaimVoucher">
         update claim_voucher set cause=#{cause},create_sn=#{createSn},
@@ -55,4 +55,33 @@
         where total_amount &gt;=#{low} and total_amount &lt;= #{high}
 </select>
 
+
+
+    <!--<resultMap id="claimVoucher" type="com.msj.entity.ClaimVoucher">-->
+        <!--<result property="cause" column="cause" javaType="java.lang.String"/>-->
+        <!--<result property="createSn" column="create_sn" javaType="java.lang.String"/>-->
+        <!--<result property="createTime" column="create_time" javaType="java.util.Date"/>-->
+        <!--<result property="nextDealSn" column="next_deal_sn" javaType="java.lang.String"/>-->
+        <!--<result property="totalAmount" column="total_amount" javaType="java.lang.Double"/>-->
+        <!--<result property="status" column="status" javaType="java.lang.String"/>-->
+        <!--<association property="creater" column="create_sn" javaType="com.msj.entity.Employee">-->
+            <!--<result property="name" column="name" javaType="java.lang.String"/>-->
+        <!--</association>-->
+        <!--<association property="dealer" column="next_deal_sn" javaType="com.msj.entity.Employee">-->
+            <!--<result property="name" column="name" javaType="String"/>-->
+        <!--</association>-->
+    <!--</resultMap>-->
+
+
+    <select id="selectclaimVoucher" parameterType="int" resultMap="claimVoucher">
+        select c.*,
+        cv.item,cv.amount,cv.`comment`,
+        e.name cname
+        from claim_voucher c
+        LEFT JOIN claim_voucher_item cv
+        on c.id = cv.claim_voucher_id
+        LEFT JOIN employee e
+        on c.create_sn = e.sn
+        where c.id = #{id}
+    </select>
 </mapper>
