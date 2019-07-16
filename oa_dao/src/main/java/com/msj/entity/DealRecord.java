@@ -85,4 +85,18 @@ public class DealRecord {
     public void setDealer(Employee dealer) {
         this.dealer = dealer;
     }
+
+    @Override
+    public String toString() {
+        return "DealRecord{" +
+                "id=" + id +
+                ", claimVoucherId=" + claimVoucherId +
+                ", dealSn='" + dealSn + '\'' +
+                ", dealTime=" + dealTime +
+                ", dealWay='" + dealWay + '\'' +
+                ", dealResult='" + dealResult + '\'' +
+                ", comment='" + comment + '\'' +
+                ", dealer=" + dealer +
+                '}';
+    }
 }

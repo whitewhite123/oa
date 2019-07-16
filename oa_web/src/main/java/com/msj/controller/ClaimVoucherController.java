@@ -94,10 +94,12 @@ public class ClaimVoucherController {
     @RequestMapping("/detail")
     public String detail(Integer id,Map<String,Object> map){
         ClaimVoucher claimVoucher = claimVoucherService.findclaimVoucher(id);
+        List<ClaimVoucherItem> items = claimVoucherService.findItems(id);
+        List<DealRecord> records = claimVoucherService.findRecords(id);
         System.out.println(claimVoucher);
         map.put("claimVoucher",claimVoucher);
-//        map.put("items",items);
-//        map.put("records",records);
+        map.put("items",items);
+        map.put("records",records);
         return "claim_voucher_detail";
     }
 

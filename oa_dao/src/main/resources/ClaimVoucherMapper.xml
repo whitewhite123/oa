@@ -12,7 +12,7 @@
         <result property="totalAmount" column="total_amount" javaType="java.lang.Double"/>
         <result property="status" column="status" javaType="java.lang.String"/>
         <association property="creater" column="create_sn" javaType="com.msj.entity.Employee">
-            <result property="name" column="name" javaType="java.lang.String"/>
+            <result property="name" column="cname" javaType="java.lang.String"/>
         </association>
     </resultMap>
     <!--

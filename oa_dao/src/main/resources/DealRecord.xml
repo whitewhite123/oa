@@ -4,8 +4,26 @@
 
 <mapper namespace="com.msj.dao.DealRecordDao">
     <resultMap id="dealRecord" type="com.msj.entity.DealRecord">
+        <id column="id" property="id" javaType="Integer"/>
+        <result column="claim_voucher_id" property="claimVoucherId" javaType="Integer"/>
+        <result column="deal_sn" property="dealSn" javaType="String"/>
+        <result column="deal_time" property="dealTime" javaType="java.util.Date"/>
+        <result column="deal_way" property="dealWay" javaType="String"/>
+        <result column="deal_result" property="dealResult" javaType="String"/>
+        <result column="comment" property="comment" javaType="String"/>
+        <association property="dealer" column="deal_sn" javaType="com.msj.entity.Employee">
+            <result column="name" property="name" javaType="String"/>
+        </association>
 
     </resultMap>
+
+    <select id="selectRecord" resultMap="dealRecord">
+        select d.*,e.name
+        from deal_record d
+        left join employee e on d.deal_sn = e.sn
+        where d.claim_voucher_id=#{cid}
+    </select>
+
     <insert id="insertOne" parameterType="com.msj.entity.DealRecord">
         insert into deal_record(id,claim_voucher_id,deal_sn,deal_time,deal_way,deal_result,comment)
         values (#{id},#{claimVoucherId},#{dealSn},#{dealTime},#{dealWay},#{dealResult},#{comment})

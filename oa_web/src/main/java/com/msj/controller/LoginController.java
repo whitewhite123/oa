@@ -22,8 +22,7 @@ public class LoginController {
     //登录处理
     @RequestMapping("/login")
     public String login(String sn, String password, HttpSession session){
-        Employee employee = loginService.selectOne(sn, password);
-        System.out.println(employee);
+        Employee employee = loginService.selectOne(sn, password);;
         //查询出来，就可以登录成功
         if(employee!=null){
             //登录成功，设置session

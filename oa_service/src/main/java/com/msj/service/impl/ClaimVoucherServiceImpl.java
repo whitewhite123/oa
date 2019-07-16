@@ -12,6 +12,7 @@ import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -47,18 +48,31 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
     }
 
     //查询个人报销单
+//    public List<ClaimVoucher> findSelf(String createSn) {
+////        List<ClaimVoucher> claimVoucherList = claimVoucherDao.selectClaimVoucherStatus(createSn);
+////        Iterator<ClaimVoucher> iterator = claimVoucherList.iterator();
+////        while(iterator.hasNext()){
+////            ClaimVoucher next = iterator.next();
+////            if((next.getStatus().equals(Contant.CLAIMVOUCHER_CREATED))){
+////                //找到status = '新创建'就把它移出到list之外
+////                iterator.remove();
+////            }
+////        }
+////        return claimVoucherList;
+////    }
+
     public List<ClaimVoucher> findSelf(String createSn) {
         List<ClaimVoucher> claimVoucherList = claimVoucherDao.selectClaimVoucherStatus(createSn);
-        Iterator<ClaimVoucher> iterator = claimVoucherList.iterator();
-        while(iterator.hasNext()){
-            ClaimVoucher next = iterator.next();
-            if((next.getStatus().equals(Contant.CLAIMVOUCHER_CREATED))){
-                //找到status = '新创建'就把它移出到list之外
-                iterator.remove();
+        ArrayList<ClaimVoucher> list = new ArrayList<ClaimVoucher>();
+        for(ClaimVoucher c:claimVoucherList){
+            if((c.getStatus()).equals(Contant.CLAIMVOUCHER_CREATED)){
+                //如果报销单的status='新创建',就跳过这一个，继续下一个
+                continue;
             }
+            list.add(c);
         }
-        return claimVoucherList;
-
+        System.out.println(list);
+        return list;
     }
 
     //查询待处理的报销单
@@ -89,14 +103,11 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
         return claimVoucherItemDao.selectItems(cid);
     }
 
-    public List<DealRecord> findRecords(Integer id) {
-        return null;
-    }
 
     //查询记录信息
-//    public List<DealRecord> findRecords(Integer id) {
-//        return dealRecordDao.selectRecord(id);
-//    }
+    public List<DealRecord> findRecords(Integer cid) {
+        return dealRecordDao.selectRecord(cid);
+    }
 
     //更新报销单
     public void edit(ClaimVoucher claimVoucher, List<ClaimVoucherItem> items) {
