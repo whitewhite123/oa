@@ -43,16 +43,8 @@ public class ClaimVoucherController {
 //        return "claim_voucher_self";
 //    }
 
-    //查看待处理的报销单
-//    @RequestMapping("/deal")
-//    public String deal(Map<String,Object> map,HttpSession session){
-//        Employee employee = (Employee)session.getAttribute("employee");
-//        String createSn = employee.getSn();
-//        List<ClaimVoucher> claimVoucherList = claimVoucherService.findForDeal(createSn);
-//        map.put("list",claimVoucherList);
-//        return "claim_voucher_deal";
-//    }
 
+    //查看待处理的报销单
     @RequestMapping("/deal")
     public String deal(Map<String,Object> map,HttpSession session){
         Employee employee = (Employee)session.getAttribute("employee");

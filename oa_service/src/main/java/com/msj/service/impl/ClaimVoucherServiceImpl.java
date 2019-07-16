@@ -26,16 +26,23 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
 
     //添加报销单
     public void save(ClaimVoucher claimVoucher, List<ClaimVoucherItem> items) {
-        claimVoucher.setCreateTime(new Date()); //创建时间
-        claimVoucher.setNextDealSn(claimVoucher.getCreateSn());
+        Date date = new Date();
+        claimVoucher.setCreateTime(date); //创建时间
         claimVoucher.setStatus(Contant.CLAIMVOUCHER_CREATED); //状态
-        //添加到claimVoucher表中
+        //添加到claim_voucher表中
         claimVoucherDao.insertOne(claimVoucher);
-        //添加到claimVoucherItem表中
+        //添加到claim_voucher_item表中
         for(ClaimVoucherItem item:items){
             item.setClaimVoucherId(claimVoucher.getId());
             claimVoucherItemDao.insertOne(item);
         }
+        //添加记录到deal_record表中
+        DealRecord dealRecord = new DealRecord();
+        dealRecord.setDealTime(date);
+        dealRecord.setDealSn(claimVoucher.getCreateSn());
+        dealRecord.setClaimVoucherId(claimVoucher.getId());
+        dealRecord.setDealWay(Contant.DEAL_CREATE);
+        dealRecordDao.insertOne(dealRecord);
     }
 
     //查询个人报销单
@@ -71,10 +78,14 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
         return claimVoucherItemDao.selectItems(cid);
     }
 
-    //查询记录信息
     public List<DealRecord> findRecords(Integer id) {
-        return dealRecordDao.selectRecord(id);
+        return null;
     }
+
+    //查询记录信息
+//    public List<DealRecord> findRecords(Integer id) {
+//        return dealRecordDao.selectRecord(id);
+//    }
 
     //更新报销单
     public void edit(ClaimVoucher claimVoucher, List<ClaimVoucherItem> items) {
