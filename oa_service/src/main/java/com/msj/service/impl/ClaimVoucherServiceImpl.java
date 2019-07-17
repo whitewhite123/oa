@@ -43,6 +43,7 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
             item.setClaimVoucherId(claimVoucher.getId());
             claimVoucherItemDao.insertOne(item);
         }
+
         //添加记录到deal_record表中
         DealRecord dealRecord = new DealRecord();
         dealRecord.setDealTime(date);
@@ -52,7 +53,7 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
         dealRecordDao.insertOne(dealRecord);
     }
 
-    //查询个人报销单
+    //查询个人报销单（方法一）
 //    public List<ClaimVoucher> findSelf(String createSn) {
 ////        List<ClaimVoucher> claimVoucherList = claimVoucherDao.selectClaimVoucherStatus(createSn);
 ////        Iterator<ClaimVoucher> iterator = claimVoucherList.iterator();
@@ -65,7 +66,7 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
 ////        }
 ////        return claimVoucherList;
 ////    }
-
+    //查询个人报销单（方法二）
     public List<ClaimVoucher> findSelf(String createSn) {
         List<ClaimVoucher> claimVoucherList = claimVoucherDao.selectClaimVoucherStatus(createSn);
         ArrayList<ClaimVoucher> list = new ArrayList<ClaimVoucher>();
@@ -81,6 +82,12 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
     }
 
     //查询待处理的报销单
+    //根据职位确定待处理的报销单
+    /*
+        总经理：处理--待复审
+        部门经理：处理--已提交
+        财务经理：处理--已审核
+     */
     public List<ClaimVoucher> findForDeal(String post) {
         if(post.equals("总经理")){
             String status = Contant.CLAIMVOUCHER_RECHECK;
@@ -179,72 +186,92 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
         claimVoucherDao.updateStatus(id,status,sn);
 
         //增加一条记录，添加到deal_record表中
-        DealRecord dealRecord = new DealRecord();
-        dealRecord.setDealTime(new Date());
         ClaimVoucher claimVoucher = claimVoucherDao.selectCreateSnById(id);
-        dealRecord.setDealSn(claimVoucher.getCreateSn());
-        dealRecord.setClaimVoucherId(id);
-        dealRecord.setDealWay(Contant.DEAL_SUBMIT);
-        dealRecordDao.insertOne(dealRecord);
+        String dealSn = claimVoucher.getCreateSn();
+        String dealWay = Contant.DEAL_SUBMIT; //提交
+        addDealRecord(id,dealWay,dealSn);
+
     }
 
-    public void check(DealRecord dealRecord,String sn) {
+    //审核
+    public void check(DealRecord dealRecord,String dealSn,String post) {
         //查出总金额
         // 如果>5000（给总经理审批），则状态为待复审；如果<5000（给财务经理审批），则状态为已审核
         Integer cid = dealRecord.getClaimVoucherId();
-        System.out.println(cid);
         ClaimVoucher claimVoucher = claimVoucherDao.selectclaimVoucher(cid);
-        System.out.println(claimVoucher);
         Double totalAmount = claimVoucher.getTotalAmount();
 
-        //处理方式
+        //获取处理方式：通过、打回、拒绝
         String dealWay = dealRecord.getDealWay();
-        if(dealWay.equals(Contant.DEAL_PASS)){//通过
-            //在通过的基础上，确定status是待复审还是已审核
+
+        //1、处理方式：通过
+        if(dealWay.equals(Contant.DEAL_PASS)){
+            //在通过的基础上，确定status：待复审  or 已审核
+            //(1) 总额>5000,状态：待复审
             if(totalAmount>=5000){
-                String status = Contant.CLAIMVOUCHER_RECHECK;//待复审
+                //总经理和部门经理处理>5000的报销单
+                //a.总经理处理完后--状态：已审核
+                if(post.equals(Contant.POST_GM)){//总经理
+                    String status = Contant.CLAIMVOUCHER_APPROVED; //已审核
+                    Employee employee = employeeDao.selectNameByPost(Contant.POST_CASHIER);//财务经理
+                    String nextDealSn = employee.getSn(); //下一个处理人的sn
 
-                String post = Contant.POST_GM;//总经理
-                Employee employee = employeeDao.selectNameByPost(post);
-                String dealSn = employee.getSn();
+                    //添加记录到deal_record表中，dealSn:处理人
+                    addDealRecord(cid,dealWay,dealSn);
 
-                //添加记录到deal_record表中
-                addDealRecord(cid,status,dealSn);
+                    //更新claim_voucher表中的状态
+                    claimVoucherDao.updateStatus(cid,status,nextDealSn);
 
-                //更新claim_voucher表中的状态
-                claimVoucherDao.updateStatus(cid,status,dealSn);
-            }else{
-                String status = Contant.CLAIMVOUCHER_APPROVED;//已审核
+                }
+                //b.部门经理处理完后--状态：待复审
+                else if(post.equals(Contant.POST_FM)){//部门经理
+                    String status = Contant.CLAIMVOUCHER_RECHECK;//待复审
+                    Employee employee = employeeDao.selectNameByPost(Contant.POST_GM);//总经理
+                    String nextDealSn = employee.getSn(); //下一个处理人的sn
 
-                String post = Contant.POST_CASHIER; //财务经理
-                Employee employee = employeeDao.selectNameByPost(post);
-                String dealSn = employee.getSn();
+                    //添加记录到deal_record表中，dealSn:处理人
+                    addDealRecord(cid,dealWay,dealSn);
 
-                addDealRecord(cid,status,dealSn);
-                claimVoucherDao.updateStatus(cid,status,dealSn);
+                    //更新claim_voucher表中的状态
+                    claimVoucherDao.updateStatus(cid,status,nextDealSn);
+                }
             }
-        }else if(dealWay.equals(Contant.DEAL_BACK)){//打回
+            //(2) 总额<5000, 状态：已审核
+            else{
+                String status = Contant.CLAIMVOUCHER_APPROVED;//已审核
+                Employee employee = employeeDao.selectNameByPost(Contant.POST_CASHIER); //财务经理
+                String nextDealSn = employee.getSn();
+
+                addDealRecord(cid,dealWay,dealSn);
+                claimVoucherDao.updateStatus(cid,status,nextDealSn);
+            }
+        }
+        //2、处理方式：打回
+        else if(dealWay.equals(Contant.DEAL_BACK)){
             String status = Contant.CLAIMVOUCHER_BACK; //已打回
 
             //已打回：则处理人是员工自己
-            addDealRecord(cid,status,sn);
-            claimVoucherDao.updateStatus(cid,status,sn);
+            addDealRecord(cid,dealWay,dealSn);
+            claimVoucherDao.updateStatus(cid,status,dealSn);
 
-        }else if(dealWay.equals(Contant.DEAL_REJECT)){//拒绝
+        }
+        //3、处理方式：拒绝
+        else if(dealWay.equals(Contant.DEAL_REJECT)){//拒绝
             String status = Contant.CLAIMVOUCHER_TERMINATED; //已拒绝
 
             //已拒绝：则处理人是员工自己
-            addDealRecord(cid,status,sn);
-            claimVoucherDao.updateStatus(cid,status,sn);
+            addDealRecord(cid,dealWay,dealSn);
+            claimVoucherDao.updateStatus(cid,status,dealSn);
         }
     }
+
     //添加记录到deal_record表中
-    public void addDealRecord(Integer cid,String status,String dealSn){
+    public void addDealRecord(Integer cid,String dealWay,String dealSn){
         DealRecord dealRecord = new DealRecord();
         dealRecord.setDealTime(new Date());
         dealRecord.setDealSn(dealSn);
         dealRecord.setClaimVoucherId(cid);
-        dealRecord.setDealWay(status);
+        dealRecord.setDealWay(dealWay);
         dealRecordDao.insertOne(dealRecord);
     }
 

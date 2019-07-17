@@ -114,7 +114,8 @@ public class ClaimVoucherController {
     public String check(DealRecord dealRecord,HttpSession session){
         Employee employee = (Employee) session.getAttribute("employee");
         String sn = employee.getSn();
-        claimVoucherService.check(dealRecord,sn);
+        String post = employee.getPost();
+        claimVoucherService.check(dealRecord,sn,post);
         return "redirect:/claim_voucher/deal";
     }
 

@@ -36,9 +36,10 @@
                     </div>
                     <div class="section row">
                         <C:forEach items="${items}" var="item">
-                        <div class="col-md-3">${item.item}</div>
-                        <div class="col-md-3">${item.amount}</div>
-                        <div class="col-md-5">${item.comment}</div>
+                            <div class="col-md-3">${item.item}</div>
+                            <div class="col-md-3">${item.amount}</div>
+                            <div class="col-md-5">${item.comment}</div>
+                            <br>
                         </C:forEach>
                     </div>
                     <div class="section row">

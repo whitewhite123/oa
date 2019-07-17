@@ -28,4 +28,9 @@
         insert into deal_record(id,claim_voucher_id,deal_sn,deal_time,deal_way,deal_result,comment)
         values (#{id},#{claimVoucherId},#{dealSn},#{dealTime},#{dealWay},#{dealResult},#{comment})
     </insert>
+
+    <select id="selectIsRecord" parameterType="com.msj.entity.DealRecord" resultMap="dealRecord">
+        select * from deal_record
+        where claim_voucher_id = #{cid} and deal_way = #{dealWay}
+    </select>
 </mapper>
