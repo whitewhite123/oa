@@ -37,7 +37,7 @@ public class Contant {
     public static final String CLAIMVOUCHER_SUBMIT="已提交";
     public static final String CLAIMVOUCHER_APPROVED="已审核";
     public static final String CLAIMVOUCHER_BACK="已打回";
-    public static final String CLAIMVOUCHER_TERMINATED="已终止";
+    public static final String CLAIMVOUCHER_TERMINATED="已拒绝";
     public static final String CLAIMVOUCHER_RECHECK="待复审";
     public static final String CLAIMVOUCHER_PAID="已打款";
     //审核额度

@@ -18,4 +18,5 @@ public interface ClaimVoucherService {
     List<DealRecord> findRecords(Integer id);
     void edit(ClaimVoucher claimVoucher,List<ClaimVoucherItem> items);
     void submit(Integer id);
+    void check(DealRecord dealRecord,String sn);
 }

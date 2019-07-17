@@ -29,6 +29,7 @@ public class ClaimVoucherController {
     public String add(HttpSession session,ClaimVoucherInfo info){
         Employee employee = (Employee) session.getAttribute("employee");
         info.getClaimVoucher().setCreateSn(employee.getSn());
+        info.getClaimVoucher().setNextDealSn(employee.getSn());//新创建后的处理人还是自己，需要提交
         claimVoucherService.save(info.getClaimVoucher(),info.getItems());
         return "redirect:/claim_voucher/self";
     }
@@ -39,7 +40,6 @@ public class ClaimVoucherController {
         Employee employee = (Employee)session.getAttribute("employee");
         String createSn = employee.getSn(); //根据创建人查看个人报销单
         List<ClaimVoucher> claimVoucherList = claimVoucherService.findSelf(createSn);
-        System.out.println(claimVoucherList);
         map.put("list",claimVoucherList);
         return "claim_voucher_self";
     }
@@ -89,6 +89,32 @@ public class ClaimVoucherController {
     @RequestMapping("/submit")
     public String submit(Integer id){
         claimVoucherService.submit(id);
+        return "redirect:/claim_voucher/deal";
+    }
+
+    //审核报销单
+    @RequestMapping("/to_check")
+    public String toCheck(Map<String,Object> map,Integer id,HttpSession session){
+        List<DealRecord> records = claimVoucherService.findRecords(id);
+        ClaimVoucher claimVoucher = claimVoucherService.findclaimVoucher(id);
+        List<ClaimVoucherItem> items = claimVoucherService.findItems(id);
+        DealRecord record = new DealRecord();
+        record.setClaimVoucherId(claimVoucher.getId());
+        //处理人
+        Employee employee = (Employee) session.getAttribute("employee");
+        record.setDealer(employee);
+
+        map.put("records",records);
+        map.put("claimVoucher",claimVoucher);
+        map.put("items",items);
+        map.put("record",record);
+        return "claim_voucher_check";
+    }
+    @RequestMapping("/check")
+    public String check(DealRecord dealRecord,HttpSession session){
+        Employee employee = (Employee) session.getAttribute("employee");
+        String sn = employee.getSn();
+        claimVoucherService.check(dealRecord,sn);
         return "redirect:/claim_voucher/deal";
     }
 

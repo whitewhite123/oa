@@ -13,8 +13,11 @@ public interface ClaimVoucherDao {
     List<ClaimVoucher> selectForDeal(String status);
     ClaimVoucher selectclaimVoucher(Integer id);
     void update(ClaimVoucher claimVoucher);
-    void updateStatus(@Param("id") Integer id,@Param("status") String status);
+    void updateStatus(@Param("id") Integer id,@Param("status") String status,
+                      @Param("nextDealSn")String nextDealSn);
     ClaimVoucher selectCreateSnById(Integer id);
 
     List<ClaimVoucher> selectClaimVoucherStatus(String createSn);
+
+
 }

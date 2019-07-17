@@ -69,7 +69,8 @@
     </select>
 
     <update id="updateStatus" parameterType="com.msj.entity.ClaimVoucher">
-        update claim_voucher set status = #{status} where id = #{id}
+        update claim_voucher set status = #{status},next_deal_sn = #{nextDealSn}
+        where id = #{id}
     </update>
 
     <select id="selectCreateSnById" parameterType="com.msj.entity.ClaimVoucher" resultMap="claimVoucher">

@@ -9,6 +9,7 @@
         <result property="item" column="item" javaType="java.lang.String"/>
         <result property="amount" column="amount" javaType="java.lang.Double"/>
         <result property="comment" column="comment" javaType="java.lang.String"/>
+
     </resultMap>
     <insert id="insertOne" parameterType="com.msj.entity.ClaimVoucherItem">
         insert into claim_voucher_item(claim_voucher_id,item,amount,comment)
