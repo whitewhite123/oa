@@ -10,7 +10,7 @@ import java.util.List;
 public interface ClaimVoucherDao {
     void insertOne(ClaimVoucher claimVoucher);
     List<ClaimVoucher> selectSelf(String createSn);
-    List<ClaimVoucher> selectForDeal(String status);
+    List<ClaimVoucher> selectForDeal(@Param("statusList") List<String> statusList);
     ClaimVoucher selectclaimVoucher(Integer id);
     void update(ClaimVoucher claimVoucher);
     void updateStatus(@Param("id") Integer id,@Param("status") String status,

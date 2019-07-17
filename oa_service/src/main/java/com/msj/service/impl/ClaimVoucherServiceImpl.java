@@ -87,22 +87,22 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
         总经理：处理--待复审
         部门经理：处理--已提交
         财务经理：处理--已审核
+        员工：处理--新创建、已打回、已拒绝
      */
     public List<ClaimVoucher> findForDeal(String post) {
+        ArrayList<String> statusList = new ArrayList<String>();
         if(post.equals("总经理")){
-            String status = Contant.CLAIMVOUCHER_RECHECK;
-            return claimVoucherDao.selectForDeal(status);
+            statusList.add(Contant.CLAIMVOUCHER_RECHECK);
         }else if(post.equals("部门经理")){
-            String status = Contant.CLAIMVOUCHER_SUBMIT;
-            return claimVoucherDao.selectForDeal(status);
+            statusList.add(Contant.CLAIMVOUCHER_SUBMIT);//已提交
         }else if(post.equals("财务经理")){
-            String status = Contant.CLAIMVOUCHER_APPROVED;
-            return claimVoucherDao.selectForDeal(status);
+            statusList.add(Contant.CLAIMVOUCHER_APPROVED);//已审核
         }else{
-            String status = Contant.CLAIMVOUCHER_CREATED;
-            return claimVoucherDao.selectForDeal(status);
+            statusList.add(Contant.CLAIMVOUCHER_CREATED);//新创建
+            statusList.add(Contant.CLAIMVOUCHER_BACK);//已打回
+            statusList.add(Contant.CLAIMVOUCHER_TERMINATED);//已拒绝
         }
-
+        return claimVoucherDao.selectForDeal(statusList);
     }
 
     //查询报销单详情

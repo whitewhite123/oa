@@ -31,10 +31,13 @@
         where create_sn=#{createSn}
     </select>
 
-    <select id="selectForDeal" resultMap="claimVoucher" parameterType="String">
+    <select id="selectForDeal" resultMap="claimVoucher" parameterType="map">
         select c.*,e.name cname from claim_voucher c left join employee e
         on c.create_sn = e.sn
-        where c.status = #{status}
+        where c.status in
+        <foreach collection="statusList" item="s" open="(" close=")" separator="," >
+            #{s}
+        </foreach>
     </select>
 
     <!--<select id="selectclaimVoucher" resultMap="claimVoucher">-->
