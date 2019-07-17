@@ -201,7 +201,7 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
         ClaimVoucher claimVoucher = claimVoucherDao.selectclaimVoucher(cid);
         Double totalAmount = claimVoucher.getTotalAmount();
 
-        //获取处理方式：通过、打回、拒绝
+        //获取处理方式：通过、打回、拒绝、打款
         String dealWay = dealRecord.getDealWay();
 
         //1、处理方式：通过
@@ -263,6 +263,17 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
             addDealRecord(cid,dealWay,dealSn);
             claimVoucherDao.updateStatus(cid,status,dealSn);
         }
+        //4、处理方式：打款
+        else if(dealWay.equals(Contant.DEAL_PAID)){//打款
+            String status = Contant.CLAIMVOUCHER_PAID;//已打款
+
+            //已打款：则没有处理人
+            addDealRecord(cid,dealWay,dealSn);
+            String overSn = null;
+            claimVoucherDao.updateStatus(cid,status,overSn);
+
+        }
+
     }
 
     //添加记录到deal_record表中
