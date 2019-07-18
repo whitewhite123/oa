@@ -50,6 +50,7 @@ public class ClaimVoucherController {
     public String deal(Map<String,Object> map,HttpSession session){
         Employee employee = (Employee)session.getAttribute("employee");
         String post = employee.getPost();
+        //根据职位查看待处理的报销单
         List<ClaimVoucher> list = claimVoucherService.findForDeal(post);
         map.put("list",list);
         return "claim_voucher_deal";
@@ -78,6 +79,7 @@ public class ClaimVoucherController {
         return "claim_voucher_update";
     }
     @RequestMapping("/update")
+    //同时更新claim_voucher和claim_voucher_item
     public String update(ClaimVoucherInfo info,HttpSession session){
         Employee employee = (Employee)session.getAttribute("employee");
         info.getClaimVoucher().setCreateSn(employee.getSn());

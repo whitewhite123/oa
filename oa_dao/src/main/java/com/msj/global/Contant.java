@@ -40,6 +40,7 @@ public class Contant {
     public static final String CLAIMVOUCHER_TERMINATED="已拒绝";
     public static final String CLAIMVOUCHER_RECHECK="待复审";
     public static final String CLAIMVOUCHER_PAID="已打款";
+
     //审核额度
     public static final double LIMIT_CHECK=5000.00;
 

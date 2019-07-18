@@ -9,4 +9,5 @@ public interface ClaimVoucherItemDao {
     List<ClaimVoucherItem> selectItems(Integer cid);
     void update(ClaimVoucherItem item);
     void delete(Integer id);
+    Integer deleteByClaimVoucherId(Integer cid);
 }

@@ -18,6 +18,7 @@ public interface ClaimVoucherDao {
     ClaimVoucher selectCreateSnById(Integer id);
 
     List<ClaimVoucher> selectClaimVoucherStatus(String createSn);
+    Integer deleteById(Integer id);
 
 
 

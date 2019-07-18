@@ -84,10 +84,11 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
     //查询待处理的报销单
     //根据职位确定待处理的报销单
     /*
-        总经理：处理--待复审
-        部门经理：处理--已提交
-        财务经理：处理--已审核
         员工：处理--新创建、已打回、已拒绝
+        部门经理：处理--已提交、已修改
+        总经理：处理--待复审
+        财务经理：处理--已审核
+
      */
     public List<ClaimVoucher> findForDeal(String post) {
         ArrayList<String> statusList = new ArrayList<String>();
@@ -144,35 +145,44 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
 
     //更新报销单
     public void edit(ClaimVoucher claimVoucher, List<ClaimVoucherItem> items) {
-        claimVoucher.setNextDealSn(claimVoucher.getCreateSn());
+        //修改claim_voucher表中的状态
         claimVoucher.setStatus(Contant.CLAIMVOUCHER_CREATED);
-        //更新报销单表
+        claimVoucher.setCreateTime(new Date());
+        Employee employee = employeeDao.selectNameByPost(Contant.POST_FM);
+        String nextDealSn = employee.getSn();
+        claimVoucher.setNextDealSn(nextDealSn);
         claimVoucherDao.update(claimVoucher);
 
-        //查询报销详情表
-        List<ClaimVoucherItem> olds = claimVoucherItemDao.selectItems(claimVoucher.getId());
-        for(ClaimVoucherItem old:olds){
-            boolean isHave = false;
-            for(ClaimVoucherItem item:items){
-                if(item.getId() == old.getId()){
-                    isHave = true;
-                    break;
-                }
-            }
-            if(!isHave){
-                //根据claim_voucher_item的主键进行删除
-                claimVoucherItemDao.delete(old.getId());
-            }
-            for(ClaimVoucherItem item:items){
-                item.setClaimVoucherId(claimVoucher.getId());
-                if(item.getId()>0){
-                    claimVoucherItemDao.update(item);
-                }else{
-                    claimVoucherItemDao.insertOne(item);
-                }
-            }
+
+        //根据claim_voucher_id 删除 claim_voucher_item中的数据
+        Integer cid = claimVoucher.getId();
+        claimVoucherItemDao.deleteByClaimVoucherId(cid);
+
+        //根据 items 添加修改完后的数据
+        for(ClaimVoucherItem item:items){
+            item.setClaimVoucherId(claimVoucher.getId());
+            claimVoucherItemDao.insertOne(item);
         }
+
+        //添加一条记录到deal_record
+        addDealRecord(claimVoucher.getId(),Contant.DEAL_UPDATE,claimVoucher.getCreateSn());
     }
+
+//    public void edit(ClaimVoucher claimVoucher, List<ClaimVoucherItem> items) {
+//        //修改claim_voucher表中的数据
+//        claimVoucher.setCreateTime(new Date());
+//        claimVoucher.setStatus(Contant.CLAIMVOUCHER_CREATED);
+//        claimVoucher.setNextDealSn(claimVoucher.getCreateSn());
+//        claimVoucherDao.update(claimVoucher);
+//
+//        //接下来处理claim_voucher_item
+//        List<ClaimVoucherItem> olds = claimVoucherItemDao.selectItems(claimVoucher.getId());
+//        for(ClaimVoucherItem old:olds)
+//
+//
+//        //添加一条记录到deal_record
+//        addDealRecord(claimVoucher.getId(),Contant.DEAL_UPDATE,claimVoucher.getCreateSn());
+//    }
 
 
     //提交
@@ -188,7 +198,7 @@ public class ClaimVoucherServiceImpl implements ClaimVoucherService{
         //增加一条记录，添加到deal_record表中
         ClaimVoucher claimVoucher = claimVoucherDao.selectCreateSnById(id);
         String dealSn = claimVoucher.getCreateSn();
-        String dealWay = Contant.DEAL_SUBMIT; //提交
+        String dealWay = Contant.DEAL_UPDATE; //修改
         addDealRecord(id,dealWay,dealSn);
 
     }

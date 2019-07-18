@@ -52,6 +52,10 @@
         where id=#{id}
     </update>
 
+    <delete id="deleteById" parameterType="Integer">
+        delete from claim_voucher where id = #{id}
+    </delete>
+
 
     <select id="selectClaimVoucherStatus" parameterType="String" resultMap="claimVoucher">
         select c.*,e.name cname from claim_voucher c left join employee e
