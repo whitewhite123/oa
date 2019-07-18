@@ -50,4 +50,15 @@ public class ClaimVoucherItem {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+    @Override
+    public String toString() {
+        return "ClaimVoucherItem{" +
+                "id=" + id +
+                ", claimVoucherId=" + claimVoucherId +
+                ", item='" + item + '\'' +
+                ", amount=" + amount +
+                ", comment='" + comment + '\'' +
+                '}';
+    }
 }

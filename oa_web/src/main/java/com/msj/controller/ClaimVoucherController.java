@@ -82,6 +82,7 @@ public class ClaimVoucherController {
     //同时更新claim_voucher和claim_voucher_item
     public String update(ClaimVoucherInfo info,HttpSession session){
         Employee employee = (Employee)session.getAttribute("employee");
+        System.out.println(info);
         info.getClaimVoucher().setCreateSn(employee.getSn());
         claimVoucherService.edit(info.getClaimVoucher(),info.getItems());
         return "redirect:/claim_voucher/deal";

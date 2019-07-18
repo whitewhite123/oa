@@ -21,7 +21,7 @@
     </select>
 
     <update id="update" parameterType="com.msj.entity.ClaimVoucherItem">
-        update claim_voucher_item set claim_voucher_id = #{claimVoucherId },item=#{item},amount=#{amount},comment=#{comment}
+        update claim_voucher_item set claim_voucher_id = #{claimVoucherId},item=#{item},amount=#{amount},comment=#{comment}
         where id=#{id}
     </update>
 
